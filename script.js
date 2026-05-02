@@ -1,6 +1,6 @@
 let map;
 let geoJsonLayer;
-let currentMode = ''; // 'ar' o 'departamentos-tucuman'
+let currentMode = '';
 
 const regionData = {
     ar: {
@@ -50,7 +50,6 @@ const regionData = {
     }
 };
 
-// Guardar estados en LocalStorage
 let savedStates = JSON.parse(localStorage.getItem('mapVisitedData')) || {};
 
 function initMap(mode) {
@@ -58,28 +57,44 @@ function initMap(mode) {
     document.getElementById('main-menu').classList.add('hidden');
     document.getElementById('map-container').classList.remove('hidden');
 
-    if (map) map.remove();
+    if (map) {
+        map.off();
+        map.remove();
+    }
 
-    map = L.map('map', { zoomControl: false }).setView([-38, -63], 4);
-    if (mode === 'tucuman') map.setView([-27, -65.5], 8);
+    // Inicializar mapa
+    map = L.map('map', { zoomControl: false });
+    
+    const fileName = mode === 'ar' ? 'ar.json' : 'departamentos-tucuman.json';
 
-    const file = mode === 'ar' ? 'ar.json' : 'departamentos-tucuman.json';
-
-    fetch(file)
-        .then(res => res.json())
+    fetch(fileName)
+        .then(response => {
+            if (!response.ok) throw new Error("No se pudo cargar el JSON");
+            return response.json();
+        })
         .then(data => {
             geoJsonLayer = L.geoJson(data, {
                 style: feature => ({
                     fillColor: getColor(feature),
-                    weight: 1.5,
+                    weight: 2,
                     opacity: 1,
                     color: 'white',
-                    fillOpacity: 0.8
+                    fillOpacity: 0.7
                 }),
                 onEachFeature: onEachFeature
             }).addTo(map);
             map.fitBounds(geoJsonLayer.getBounds());
-        });
+        })
+        .catch(err => alert("Error: Asegúrate de subir los archivos JSON a GitHub. " + err));
+}
+
+function getFeatureId(feature) {
+    // Para Argentina usa NAME_1, para Tucumán usa departamen
+    if (currentMode === 'ar') {
+        return feature.properties.NAME_1 ? feature.properties.NAME_1.toLowerCase() : "";
+    } else {
+        return feature.properties.departamen ? feature.properties.departamen.toString() : "";
+    }
 }
 
 function getColor(feature) {
@@ -90,18 +105,12 @@ function getColor(feature) {
     return '#E0E0E0';
 }
 
-function getFeatureId(feature) {
-    // Adaptar según cómo vengan las IDs en tus JSONs
-    return feature.properties.name?.toLowerCase() || feature.properties.id || feature.id;
-}
-
 function onEachFeature(feature, layer) {
     const id = getFeatureId(feature);
     const dataKey = currentMode === 'ar' ? 'ar' : 'ar-tucuman';
-    const info = regionData[dataKey][id] || { name: id, cap: "No disponible" };
+    const info = regionData[dataKey][id] || { name: "Desconocido", cap: "-" };
 
-    layer.on('click', (e) => {
-        // Ciclo de estados: neutral -> visited -> passed -> neutral
+    layer.on('click', () => {
         const currentStatus = savedStates[id] || 'neutral';
         let nextStatus = 'visited';
         if (currentStatus === 'visited') nextStatus = 'passed';
@@ -109,12 +118,16 @@ function onEachFeature(feature, layer) {
 
         savedStates[id] = nextStatus;
         localStorage.setItem('mapVisitedData', JSON.stringify(savedStates));
+        
         geoJsonLayer.resetStyle(layer);
 
-        // Pop-up informativo
-        let popupContent = `<b>${info.name}</b><br>Capital: ${info.cap}`;
-        if (info.flag) popupContent += `<br><img src="flags/${info.flag}" class="popup-flag" alt="Bandera">`;
-        
+        let popupContent = `
+            <div style="text-align:center">
+                <h3 style="margin:0">${info.name}</h3>
+                <p style="margin:5px 0"><b>Capital:</b> ${info.cap}</p>
+                ${info.flag ? `<img src="flags/${info.flag}" class="popup-flag" onerror="this.style.display='none'">` : ''}
+            </div>
+        `;
         layer.bindPopup(popupContent).openPopup();
     });
 }
@@ -125,10 +138,9 @@ function backToMenu() {
 }
 
 function resetMap() {
-    if(confirm("¿Seguro que quieres borrar todos tus viajes marcados?")) {
+    if(confirm("¿Reiniciar colores?")) {
         savedStates = {};
         localStorage.removeItem('mapVisitedData');
-        geoJsonLayer.eachLayer(layer => geoJsonLayer.resetStyle(layer));
+        if (geoJsonLayer) geoJsonLayer.eachLayer(layer => geoJsonLayer.resetStyle(layer));
     }
 }
-
