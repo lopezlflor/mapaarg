@@ -3,66 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Mapa de Viajes</title>
+    <title>Mi Mapa de Viajes | Aesthetic</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="home-screen" class="screen active">
-        <header>
-            <h1>Mis Aventuras</h1>
-            <p>Selecciona un mapa para empezar a marcar</p>
-        </header>
-        <div class="menu-buttons">
-            <button onclick="showScreen('map-ar-section')">🇦🇷 Argentina</button>
-            <button onclick="showScreen('map-tuc-section')">🍋 Tucumán</button>
+    <div id="main-menu" class="overlay">
+        <div class="menu-content">
+            <h1>Mis Huellas</h1>
+            <p>Selecciona un mapa para marcar tus aventuras</p>
+            <div class="button-group">
+                <button onclick="loadMap('argentina')">Argentina</button>
+                <button onclick="loadMap('tucuman')">Tucumán</button>
+            </div>
         </div>
     </div>
 
-    <div id="map-ar-section" class="screen">
-        <div class="map-header">
-            <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
-            <h2>Mapa de Argentina</h2>
-            <button class="btn-reset" onclick="resetMap('map-argentina')">Reiniciar Mapa</button>
+    <div id="toolbar" class="hidden">
+        <button class="btn-icon" onclick="backToMenu()">🏠 Menú</button>
+        <div class="legend">
+            <span class="dot green"></span> Visitado
+            <span class="dot yellow"></span> De pasada
+            <span class="dot grey"></span> Sin visitar
         </div>
-        
-        <div class="legend-container">
-            <span class="status-box empty"></span> Sin visitar
-            <span class="status-box passing"></span> De paso
-            <span class="status-box visited"></span> Visitado
-        </div>
-
-        <div id="map-argentina" class="svg-map"></div>
+        <button class="btn-icon" onclick="resetMap()">🔄 Reiniciar</button>
     </div>
 
-    <div id="map-tuc-section" class="screen">
-        <div class="map-header">
-            <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
-            <h2>Departamentos de Tucumán</h2>
-            <button class="btn-reset" onclick="resetMap('map-tucuman')">Reiniciar Mapa</button>
-        </div>
+    <div id="map"></div>
 
-        <div class="legend-container">
-            <span class="status-box empty"></span> Sin visitar
-            <span class="status-box passing"></span> De paso
-            <span class="status-box visited"></span> Visitado
-        </div>
-
-        <div id="map-tucuman" class="svg-map"></div>
-    </div>
-
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3 id="region-name">Nombre</h3>
-            <p><strong>Capital:</strong> <span id="region-cap"></span></p>
-            <div id="region-flag-container"></div>
-            <p>Estado: <span id="region-status"></span></p>
-        </div>
-    </div>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
