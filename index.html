@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Mapa de Viajes - Argentina & Tucumán</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>Mis Aventuras</h1>
+        <div class="legend">
+            <span class="status-box empty"></span> Sin visitar
+            <span class="status-box passing"></span> De paso
+            <span class="status-box visited"></span> Visitado
+        </div>
+    </header>
+
+    <main>
+        <section class="map-container">
+            <h2>Argentina</h2>
+            <div id="map-argentina" class="svg-map">
+                <p class="placeholder-text">Carga aquí tu archivo SVG de Argentina con IDs de provincias</p>
+            </div>
+        </section>
+
+        <section class="map-container">
+            <h2>Tucumán</h2>
+            <div id="map-tucuman" class="svg-map">
+                <p class="placeholder-text">Carga aquí tu archivo SVG de Tucumán con IDs de departamentos</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3 id="region-name">Nombre</h3>
+            <p><strong>Capital:</strong> <span id="region-cap"></span></p>
+            <div id="region-flag-container"></div>
+            <p>Estado actual: <span id="region-status">Sin visitar</span></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
