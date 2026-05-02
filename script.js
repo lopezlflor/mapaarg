@@ -51,38 +51,70 @@ function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
     
-    // Inicializar interacciones si no se han hecho
-    setupMapInteractions();
+    if (screenId === 'map-ar-section') {
+        renderGeoMap('ar.json', 'map-argentina', 'ar');
+    } else if (screenId === 'map-tuc-section') {
+        renderGeoMap('departamentos-tucumán.json', 'map-tucuman', 'ar-tucuman');
+    }
 }
 
-// Lógica de clics y estados
-function setupMapInteractions() {
-    const allPaths = document.querySelectorAll('path');
+// Función principal de dibujo con D3
+async function renderGeoMap(fileName, containerId, dataKey) {
+    const container = document.getElementById(containerId);
+    if (container.children.length > 0) return; // Ya cargado
 
-    allPaths.forEach(path => {
-        // Evitamos duplicar eventos
-        path.onclick = function() {
-            const id = this.id.toLowerCase();
-            const parentDiv = this.closest('.svg-map').id;
-            
-            // Ciclo de 3 estados
-            if (!this.classList.contains('is-passing') && !this.classList.contains('is-visited')) {
-                this.classList.add('is-passing');
-            } else if (this.classList.contains('is-passing')) {
-                this.classList.remove('is-passing');
-                this.classList.add('is-visited');
-            } else {
-                this.classList.remove('is-visited');
-            }
+    const width = 600;
+    const height = 700;
 
-            showInfo(id, parentDiv, this.classList);
-        };
-    });
+    const svg = d3.select(`#${containerId}`)
+        .append("svg")
+        .attr("viewBox", `0 0 ${width} ${height}`)
+        .style("width", "100%")
+        .style("height", "auto");
+
+    try {
+        const data = await d3.json(`Data/${fileName}`);
+        
+        // Proyección automática basada en el JSON
+        const projection = d3.geoMercator().fitSize([width, height], data);
+        const pathGenerator = d3.geoPath().projection(projection);
+
+        svg.selectAll("path")
+            .data(data.features)
+            .enter()
+            .append("path")
+            .attr("d", pathGenerator)
+            .attr("id", d => {
+                // Buscamos el nombre para vincularlo con regionData
+                const name = d.properties.name || d.properties.nombre || d.id;
+                return name.toString().toLowerCase();
+            })
+            .on("click", function(event, d) {
+                const path = d3.select(this);
+                const id = path.attr("id");
+
+                // Ciclo de estados
+                if (!path.classed('is-passing') && !path.classed('is-visited')) {
+                    path.classed('is-passing', true);
+                } else if (path.classed('is-passing')) {
+                    path.classed('is-passing', false);
+                    path.classed('is-visited', true);
+                } else {
+                    path.classed('is-visited', false);
+                }
+
+                showInfo(id, containerId, this.classList);
+            });
+
+    } catch (err) {
+        console.error("Error cargando JSON:", err);
+        container.innerHTML = "Error al cargar el mapa. Revisa la consola.";
+    }
 }
 
 function showInfo(id, mapType, classList) {
-    const dataSet = mapType === 'map-argentina' ? regionData.ar : regionData['ar-tucuman'];
-    const info = dataSet[id];
+    const dataSetKey = mapType === 'map-argentina' ? 'ar' : 'ar-tucuman';
+    const info = regionData[dataSetKey][id];
 
     if (info) {
         document.getElementById("region-name").innerText = info.name;
@@ -100,13 +132,9 @@ function showInfo(id, mapType, classList) {
     }
 }
 
-// Botón Reiniciar
 function resetMap(mapId) {
     if(confirm("¿Seguro que quieres borrar todo el progreso de este mapa?")) {
-        const paths = document.querySelectorAll(`#${mapId} path`);
-        paths.forEach(p => {
-            p.classList.remove('is-passing', 'is-visited');
-        });
+        d3.selectAll(`#${mapId} path`).classed('is-passing', false).classed('is-visited', false);
     }
 }
 
