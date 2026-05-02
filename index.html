@@ -3,36 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Mapa de Viajes - Argentina & Tucumán</title>
+    <title>Mi Mapa de Viajes</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <h1>Mis Aventuras</h1>
-        <div class="legend">
+    <div id="home-screen" class="screen active">
+        <header>
+            <h1>Mis Aventuras</h1>
+            <p>Selecciona un mapa para empezar a marcar</p>
+        </header>
+        <div class="menu-buttons">
+            <button onclick="showScreen('map-ar-section')">🇦🇷 Argentina</button>
+            <button onclick="showScreen('map-tuc-section')">🍋 Tucumán</button>
+        </div>
+    </div>
+
+    <div id="map-ar-section" class="screen">
+        <div class="map-header">
+            <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+            <h2>Mapa de Argentina</h2>
+            <button class="btn-reset" onclick="resetMap('map-argentina')">Reiniciar Mapa</button>
+        </div>
+        
+        <div class="legend-container">
             <span class="status-box empty"></span> Sin visitar
             <span class="status-box passing"></span> De paso
             <span class="status-box visited"></span> Visitado
         </div>
-    </header>
 
-    <main>
-        <section class="map-container">
-            <h2>Argentina</h2>
-            <div id="map-argentina" class="svg-map">
-                <p class="placeholder-text">Carga aquí tu archivo SVG de Argentina con IDs de provincias</p>
+        <div id="map-argentina" class="svg-map">
             </div>
-        </section>
+    </div>
 
-        <section class="map-container">
-            <h2>Tucumán</h2>
-            <div id="map-tucuman" class="svg-map">
-                <p class="placeholder-text">Carga aquí tu archivo SVG de Tucumán con IDs de departamentos</p>
+    <div id="map-tuc-section" class="screen">
+        <div class="map-header">
+            <button class="btn-back" onclick="showScreen('home-screen')">← Volver</button>
+            <h2>Departamentos de Tucumán</h2>
+            <button class="btn-reset" onclick="resetMap('map-tucuman')">Reiniciar Mapa</button>
+        </div>
+
+        <div class="legend-container">
+            <span class="status-box empty"></span> Sin visitar
+            <span class="status-box passing"></span> De paso
+            <span class="status-box visited"></span> Visitado
+        </div>
+
+        <div id="map-tucuman" class="svg-map">
             </div>
-        </section>
-    </main>
+    </div>
 
     <div id="modal" class="modal">
         <div class="modal-content">
@@ -40,7 +60,7 @@
             <h3 id="region-name">Nombre</h3>
             <p><strong>Capital:</strong> <span id="region-cap"></span></p>
             <div id="region-flag-container"></div>
-            <p>Estado actual: <span id="region-status">Sin visitar</span></p>
+            <p>Estado: <span id="region-status"></span></p>
         </div>
     </div>
 
