@@ -16,7 +16,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Manejo de pantallas */
 .screen {
     display: none;
     flex-direction: column;
@@ -27,7 +26,6 @@ body {
 
 .screen.active { display: flex; }
 
-/* Botones Menú Principal */
 .menu-buttons {
     display: flex;
     gap: 20px;
@@ -49,7 +47,6 @@ button {
 
 button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
 
-/* Cabecera de Mapas */
 .map-header {
     display: flex;
     justify-content: space-between;
@@ -62,7 +59,6 @@ button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.
 .btn-back { background: #faedcd; color: #856404; font-size: 0.9em; }
 .btn-reset { background: #f8d7da; color: #721c24; font-size: 0.9em; }
 
-/* Leyenda dentro del mapa */
 .legend-container {
     background: var(--white);
     padding: 10px 20px;
@@ -84,13 +80,28 @@ button:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.
 .passing { background: var(--passing); border: 1px solid #d4a373; }
 .visited { background: var(--visited); border: 1px solid #a3ad85; }
 
-/* Estilos SVG */
-.svg-map { width: 100%; max-width: 600px; }
-path { fill: var(--empty); stroke: #fff; stroke-width: 1; cursor: pointer; transition: 0.3s; }
-path.is-passing { fill: var(--passing); }
-path.is-visited { fill: var(--visited); }
+/* Estilos para el Mapa SVG */
+.svg-map {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
 
-/* Modal (igual al anterior) */
+path {
+    fill: var(--empty);
+    stroke: #ffffff;
+    stroke-width: 1;
+    cursor: pointer;
+    transition: fill 0.3s, stroke 0.3s;
+}
+
+/* Clases de estado */
+path.is-passing { fill: var(--passing) !important; stroke: #d4a373; }
+path.is-visited { fill: var(--visited) !important; stroke: #a3ad85; }
+
+/* Modal */
 .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
 .modal-content { background: white; margin: 15% auto; padding: 25px; border-radius: 15px; width: 280px; text-align: center; position: relative; }
 .close { position: absolute; right: 15px; top: 10px; font-size: 24px; cursor: pointer; }
