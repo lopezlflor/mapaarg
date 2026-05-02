@@ -1,6 +1,6 @@
 let map;
 let geoJsonLayer;
-let currentMode = ''; // 'ar' o 'tucuman'
+let currentMode = ''; // 'ar' o 'departamentos-tucuman'
 
 const regionData = {
     ar: {
