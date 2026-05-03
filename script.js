@@ -1,12 +1,18 @@
-let map;
+let map = null;
 let currentMap = "";
 let selectedRegion = "";
 
+/* =========================
+   ARCHIVOS JSON
+========================= */
 const mapFiles = {
   ar: "data/ar.json",
   "ar-tucuman": "data/departamentos-tucuman.json"
 };
 
+/* =========================
+   DATOS DE REGIONES
+========================= */
 const regionData = {
   ar: {
     "buenos aires": { name: "Buenos Aires", cap: "La Plata", flag: "flags/ar-buenosaires.png" },
@@ -56,33 +62,56 @@ const regionData = {
   }
 };
 
+/* =========================
+   COLORES
+========================= */
 const statusColors = {
   visitado: "#b38b59",
   pasada: "#f4d03f",
   sinvisitar: "#bfc0c0"
 };
 
+/* =========================
+   UTILIDADES
+========================= */
+function normalizeCode(code) {
+  return String(code).trim().toLowerCase();
+}
+
+/* =========================
+   CARGAR Y REGISTRAR MAPA
+========================= */
 async function registerMapFromJSON(mapName, filePath) {
   const response = await fetch(filePath);
 
   if (!response.ok) {
-    throw new Error(`No se pudo cargar ${filePath}`);
+    throw new Error(`No se encontró el archivo: ${filePath}`);
   }
 
   const mapData = await response.json();
+
+  if (!mapData.paths) {
+    throw new Error(`El JSON no contiene 'paths'`);
+  }
 
   if (!jsVectorMap.maps[mapName]) {
     jsVectorMap.addMap(mapName, mapData);
   }
 }
 
+/* =========================
+   MOSTRAR MAPA
+========================= */
 async function loadMap(mapCode) {
   currentMap = mapCode;
 
   document.getElementById("mainMenu").classList.remove("active");
   document.getElementById("mapScreen").classList.add("active");
 
-  if (map) map.destroy();
+  if (map) {
+    map.destroy();
+    map = null;
+  }
 
   try {
     await registerMapFromJSON(mapCode, mapFiles[mapCode]);
@@ -99,10 +128,14 @@ async function loadMap(mapCode) {
         }
       },
       onRegionClick(event, code) {
-        selectedRegion = code.toString().toLowerCase();
+        selectedRegion = normalizeCode(code);
 
         const data = regionData[currentMap]?.[selectedRegion];
-        if (!data) return;
+
+        if (!data) {
+          alert("No hay datos para esta región: " + selectedRegion);
+          return;
+        }
 
         document.getElementById("popupName").textContent = data.name;
         document.getElementById("popupCap").textContent = data.cap;
@@ -115,12 +148,15 @@ async function loadMap(mapCode) {
 
   } catch (error) {
     console.error(error);
-    alert("Error cargando el mapa.");
+    alert("Error cargando el mapa:\n" + error.message);
   }
 }
 
+/* =========================
+   ESTADO DE REGIONES
+========================= */
 function setStatus(status) {
-  if (!selectedRegion) return;
+  if (!selectedRegion || !map) return;
 
   map.setRegionStyle(selectedRegion, {
     fill: statusColors[status]
@@ -128,6 +164,7 @@ function setStatus(status) {
 
   let saved = JSON.parse(localStorage.getItem(currentMap)) || {};
   saved[selectedRegion] = status;
+
   localStorage.setItem(currentMap, JSON.stringify(saved));
 
   closePopup();
@@ -148,8 +185,14 @@ function resetMap() {
   loadMap(currentMap);
 }
 
+/* =========================
+   UI
+========================= */
 function goHome() {
-  if (map) map.destroy();
+  if (map) {
+    map.destroy();
+    map = null;
+  }
 
   document.getElementById("mapScreen").classList.remove("active");
   document.getElementById("mainMenu").classList.add("active");
@@ -157,4 +200,4 @@ function goHome() {
 
 function closePopup() {
   document.getElementById("popup").classList.add("hidden");
-            }
+    }
