@@ -52,11 +52,12 @@ const regionData = {
     }
 };
 
-let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
+        let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
 
-// Función auxiliar para quitar tildes y normalizar texto
+// Función vital para que "Tucumán" coincida con "tucuman"
 function normalizeText(text) {
-    return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if(!text) return "";
+    return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
 function initMap(mode) {
@@ -80,16 +81,16 @@ function initMap(mode) {
             }).addTo(map);
             map.fitBounds(geoJsonLayer.getBounds());
         })
-        .catch(err => console.error("Error al cargar JSON:", err));
+        .catch(err => console.error("Error cargando el mapa:", err));
 }
 
 function getFeatureId(feature) {
     if (!feature.properties) return "";
     if (currentMode === 'ar') {
-        // Normalizamos el nombre del JSON (ej: "Tucumán" -> "tucuman")
-        return normalizeText(feature.properties.NAME_1 || "");
+        // En ar.json, el nombre de la provincia está en NAME_1
+        return normalizeText(feature.properties.NAME_1);
     } else {
-        // En Tucumán usamos el código numérico del departamento
+        // En tucuman.json, el ID está en departamen
         return feature.properties.departamen ? feature.properties.departamen.toString() : "";
     }
 }
@@ -97,9 +98,10 @@ function getFeatureId(feature) {
 function styleFeature(feature) {
     const id = getFeatureId(feature);
     const status = savedStates[id] || 'neutral';
-    let color = '#E0E0E0'; // Por defecto gris
-    if (status === 'visited') color = '#A1887F';
-    if (status === 'passed') color = '#FFF176';
+    
+    let color = '#E0E0E0'; // Gris
+    if (status === 'visited') color = '#A1887F'; // Marrón
+    if (status === 'passed') color = '#FFF176';  // Amarillo
 
     return {
         fillColor: color,
@@ -117,16 +119,15 @@ function onEachFeature(feature, layer) {
         
         const dataKey = currentMode === 'ar' ? 'ar' : 'ar-tucuman';
         const info = regionData[dataKey][selectedId] || { 
-            name: feature.properties.NAME_1 || "Desconocido", 
+            name: feature.properties.NAME_1 || "Región " + selectedId, 
             cap: "No disponible" 
         };
 
-        // Actualizar el Popup HTML
+        // Llenar el PopUp
         document.getElementById("popupName").textContent = info.name;
         document.getElementById("popupCap").textContent = info.cap;
         document.getElementById("popup").classList.remove("hidden");
         
-        // Evitar que el click se propague al mapa de fondo
         L.DomEvent.stopPropagation(e);
     });
 }
@@ -134,14 +135,13 @@ function onEachFeature(feature, layer) {
 function setStatus(status) {
     if (!selectedId || !selectedLayer) return;
 
-    // 1. Guardar en el objeto y en LocalStorage
+    // Guardar estado
     savedStates[selectedId] = status;
     localStorage.setItem('travelData', JSON.stringify(savedStates));
 
-    // 2. Actualizar el color en el mapa inmediatamente
+    // Actualizar color en el mapa
     geoJsonLayer.resetStyle(selectedLayer);
 
-    // 3. Cerrar el popup
     closePopup();
 }
 
@@ -155,7 +155,7 @@ function goHome() {
 }
 
 function resetMap() {
-    if(confirm("¿Quieres borrar todo el progreso marcado?")) {
+    if(confirm("¿Quieres borrar todos los datos guardados?")) {
         savedStates = {};
         localStorage.removeItem('travelData');
         if (geoJsonLayer) {
