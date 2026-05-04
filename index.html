@@ -1,54 +1,63 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Mapa Viajero 🍋</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Mapa Viajero 🍋</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <section id="mainMenu" class="screen active">
-    <div class="menu-box">
-      <h1>Flor's checklist 🍋</h1>
-      <div class="menu-buttons">
-        <button onclick="initMap('ar')">🇦🇷 Argentina</button>
-        <button onclick="initMap('tucuman')">🍋 Tucumán</button>
-      </div>
+    <section id="mainMenu" class="screen active">
+        <div class="menu-box">
+            <h1>Flor's checklist 🍋</h1>
+            <div class="menu-buttons">
+                <button onclick="initMap('ar')">🇦🇷 Argentina</button>
+                <button onclick="initMap('tucuman')">🍋 Tucumán</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="mapScreen" class="screen">
+        <header class="topbar">
+            <button onclick="goHome()">⬅ Menú</button>
+            <div class="legend">
+                <span><i class="visitado"></i> Visitado</span>
+                <span><i class="pasada"></i> De pasada</span>
+                <span><i class="sinvisitar"></i> Sin visitar</span>
+            </div>
+            <button onclick="resetMap()">♻ Reiniciar</button>
+        </header>
+        <div id="map"></div>
+    </section>
+
+    <div id="popup" class="popup hidden">
+        <div class="popup-content">
+            <button class="close-btn" onclick="closePopup()">✖</button>
+            <img id="popupFlag" src="" alt="Bandera" class="flag-img">
+            <h2 id="popupName">Provincia</h2>
+            
+            <div class="upload-section">
+                <select id="citySelect" class="city-selector">
+                    </select>
+                <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" onchange="handleFiles(this.files)">
+                <button onclick="document.getElementById('photoInput').click()" class="btn-upload">📸 Añadir Fotos</button>
+            </div>
+
+            <div id="photoGallery" class="grouped-gallery">
+                </div>
+
+            <div class="status-buttons">
+                <button onclick="setStatus('visited')" class="btn-status visited-btn">Visitado</button>
+                <button onclick="setStatus('passed')" class="btn-status passed-btn">De pasada</button>
+                <button onclick="setStatus('neutral')" class="btn-status neutral-btn">Limpiar</button>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <section id="mapScreen" class="screen">
-    <header class="topbar">
-      <button onclick="goHome()">⬅ Menú</button>
-      <div class="legend">
-        <span><i class="visitado"></i> Visitado</span>
-        <span><i class="pasada"></i> De pasada</span>
-        <span><i class="sinvisitar"></i> Sin visitar</span>
-      </div>
-      <button onclick="resetMap()">♻ Reiniciar</button>
-    </header>
-    <div id="map"></div>
-  </section>
-
-  <div id="popup" class="popup hidden">
-    <div class="popup-content">
-      <button class="close-btn" onclick="closePopup()">✖</button>
-      <h2 id="popupName">Provincia</h2>
-      <p><strong>Capital:</strong> <span id="popupCap">-</span></p>
-      
-      <div class="status-buttons">
-        <button onclick="setStatus('visited')" style="background:#A1887F; color:white;">Visitado</button>
-        <button onclick="setStatus('passed')" style="background:#FFF176;">De pasada</button>
-        <button onclick="setStatus('neutral')" style="background:#E0E0E0;">Limpiar</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
-  <script src="script.js"></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
