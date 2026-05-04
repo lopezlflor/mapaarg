@@ -1,65 +1,155 @@
+/* style.css */
+:root {
+  --pastel-yellow: #fff8dc;
+  --dark-yellow: #fbc02d;
+  --visited: #b38b59; /* Marrón claro */
+  --passed: #f4d03f;  /* Amarillo fuerte */
+  --neutral: #bfc0c0; /* Gris */
+  --text: #5c4b1f;
+}
+
 body {
   margin: 0;
-  font-family: 'Trebuchet MS', sans-serif;
-  background: #fff8dc;
-  color: #5c4b1f;
+  font-family: 'Quicksand', 'Trebuchet MS', sans-serif;
+  background: var(--pastel-yellow);
+  color: var(--text);
+  overflow: hidden; /* Evita scrolls raros */
 }
 
 .screen {
   display: none;
+  height: 100vh;
+  width: 100%;
 }
 
 .screen.active {
-  display: block;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Menú Principal */
 .menu-box {
+  margin: auto;
   text-align: center;
-  margin-top: 15vh;
+  padding: 2rem;
+  background: white;
+  border-radius: 30px;
+  box-shadow: 0 10px 25px rgba(196, 155, 11, 0.1);
 }
 
 .menu-box h1 {
-  font-size: 3rem;
+  font-size: 2.5rem;
   color: #c49b0b;
-}
-
-.menu-box p {
-  font-size: 1.2rem;
-}
-
-.menu-buttons {
-  margin-top: 2rem;
+  margin-bottom: 0.5rem;
 }
 
 .menu-buttons button {
   background: #ffe680;
   border: none;
   padding: 1rem 2rem;
-  margin: 1rem;
-  border-radius: 20px;
-  font-size: 1.2rem;
+  margin: 0.5rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text);
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .menu-buttons button:hover {
-  background: #ffd84d;
+  background: var(--dark-yellow);
+  transform: translateY(-3px);
 }
 
+/* Barra Superior del Mapa */
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff0a8;
-  padding: 1rem;
-  flex-wrap: wrap;
+  background: white;
+  padding: 10px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  z-index: 1000;
 }
 
 .topbar button {
   background: #ffe680;
   border: none;
+  border-radius: 12px;
+  padding: 8px 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Leyenda */
+.legend {
+  display: flex;
+  gap: 15px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.visitado { background: var(--visited); }
+.pasada { background: var(--passed); }
+.sinvisitar { background: var(--neutral); border: 1px solid #999; }
+
+/* Contenedor del Mapa */
+#map {
+  flex-grow: 1;
+  width: 100%;
+  background: var(--pastel-yellow);
+}
+
+/* Popup Aesthetic */
+.popup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.popup-content {
+  background: white;
+  padding: 25px;
+  border-radius: 25px;
+  text-align: center;
+  min-width: 250px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.status-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.status-buttons button {
+  padding: 10px;
+  border: none;
   border-radius: 15px;
-  padding: 0.7rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
   cursor: pointer;
 }
 
