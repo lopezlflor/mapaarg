@@ -27,7 +27,7 @@ const regionData = {
         "san luis": { name: "San Luis", cap: "San Luis" },
         "santa cruz": { name: "Santa Cruz", cap: "Río Gallegos" },
         "santa fe": { name: "Santa Fe", cap: "Santa Fe" },
-        "santiago del estero": { name: "Santiago del Estero", cap: "Sgo. del Estero" },
+        "santiago del estero": { name: "Santiago del Estero", cap: "Santiago del Estero" },
         "tierra del fuego": { name: "Tierra del Fuego", cap: "Ushuaia" },
         "tucuman": { name: "Tucumán", cap: "S. M. de Tucumán" }
     },
@@ -38,11 +38,11 @@ const regionData = {
         "475": { name: "Río Chico", cap: "Aguilares" },
         "476": { name: "Chicligasta", cap: "Concepción" },
         "477": { name: "Simoca", cap: "Simoca" },
-        "478": { name: "Lules", cap: "Lules" }, 
+        "478": { name: "Lules", cap: "Lules" },
         "479": { name: "Monteros", cap: "Monteros" },
         "480": { name: "Leales", cap: "Bella Vista" },
         "481": { name: "Famaillá", cap: "Famaillá" },
-        "482": { name: "Capital", cap: "S. M. de Tucumán" },
+        "482": { name: "Capital", cap: "San Miguel de Tucumán" },
         "483": { name: "Cruz Alta", cap: "Banda del Río Salí" },
         "484": { name: "Yerba Buena", cap: "Yerba Buena" },
         "485": { name: "Burruyacú", cap: "Burruyacú" },
@@ -52,11 +52,10 @@ const regionData = {
     }
 };
 
-        let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
+let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
 
-// Función vital para que "Tucumán" coincida con "tucuman"
 function normalizeText(text) {
-    if(!text) return "";
+    if (!text) return "";
     return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
 }
 
@@ -68,7 +67,7 @@ function initMap(mode) {
     if (map) map.remove();
     map = L.map('map', { zoomControl: false, attributionControl: false });
 
-    setTimeout(() => { map.invalidateSize(); }, 400);
+    setTimeout(() => { map.invalidateSize(); }, 500);
 
     const fileName = mode === 'ar' ? 'ar.json' : 'departamentos-tucuman.json';
 
@@ -80,17 +79,16 @@ function initMap(mode) {
                 onEachFeature: onEachFeature
             }).addTo(map);
             map.fitBounds(geoJsonLayer.getBounds());
-        })
-        .catch(err => console.error("Error cargando el mapa:", err));
+        });
 }
 
 function getFeatureId(feature) {
     if (!feature.properties) return "";
     if (currentMode === 'ar') {
-        // En ar.json, el nombre de la provincia está en NAME_1
-        return normalizeText(feature.properties.NAME_1);
+        // MUY IMPORTANTE: Tu ar.json usa NAME_1 para las provincias
+        return normalizeText(feature.properties.NAME_1 || "");
     } else {
-        // En tucuman.json, el ID está en departamen
+        // Tu departamentos-tucuman.json usa departamen (código numérico)
         return feature.properties.departamen ? feature.properties.departamen.toString() : "";
     }
 }
@@ -99,9 +97,9 @@ function styleFeature(feature) {
     const id = getFeatureId(feature);
     const status = savedStates[id] || 'neutral';
     
-    let color = '#E0E0E0'; // Gris
-    if (status === 'visited') color = '#A1887F'; // Marrón
-    if (status === 'passed') color = '#FFF176';  // Amarillo
+    let color = '#E0E0E0';
+    if (status === 'visited') color = '#A1887F';
+    if (status === 'passed') color = '#FFF176';
 
     return {
         fillColor: color,
@@ -118,30 +116,34 @@ function onEachFeature(feature, layer) {
         selectedId = getFeatureId(feature);
         
         const dataKey = currentMode === 'ar' ? 'ar' : 'ar-tucuman';
-        const info = regionData[dataKey][selectedId] || { 
-            name: feature.properties.NAME_1 || "Región " + selectedId, 
-            cap: "No disponible" 
-        };
+        const info = regionData[dataKey][selectedId];
 
-        // Llenar el PopUp
-        document.getElementById("popupName").textContent = info.name;
-        document.getElementById("popupCap").textContent = info.cap;
+        if (info) {
+            document.getElementById("popupName").textContent = info.name;
+            document.getElementById("popupCap").textContent = info.cap;
+        } else {
+            // Si no encuentra la info, mostramos lo que viene en el JSON para depurar
+            document.getElementById("popupName").textContent = feature.properties.NAME_1 || selectedId;
+            document.getElementById("popupCap").textContent = "Sin datos";
+        }
+
         document.getElementById("popup").classList.remove("hidden");
-        
         L.DomEvent.stopPropagation(e);
     });
 }
 
+// ESTA ES LA FUNCIÓN QUE CAMBIA EL COLOR
 function setStatus(status) {
     if (!selectedId || !selectedLayer) return;
 
-    // Guardar estado
+    // 1. Guardamos el estado
     savedStates[selectedId] = status;
     localStorage.setItem('travelData', JSON.stringify(savedStates));
 
-    // Actualizar color en el mapa
-    geoJsonLayer.resetStyle(selectedLayer);
-
+    // 2. FORZAMOS el cambio de estilo en la capa seleccionada
+    geoJsonLayer.resetStyle(selectedLayer); 
+    
+    // 3. Cerramos el popup
     closePopup();
 }
 
@@ -155,11 +157,9 @@ function goHome() {
 }
 
 function resetMap() {
-    if(confirm("¿Quieres borrar todos los datos guardados?")) {
+    if(confirm("¿Borrar todo el progreso?")) {
         savedStates = {};
         localStorage.removeItem('travelData');
-        if (geoJsonLayer) {
-            geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
-        }
+        geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
     }
 }
