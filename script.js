@@ -31,8 +31,25 @@ const regionData = {
         "tierra del fuego": { name: "Tierra del Fuego", cap: "Ushuaia", flag: "ar-tierra.png" },
         "tucuman": { name: "Tucumán", cap: "S. M. de Tucumán", flag: "ar-tucuman.png" }
     },
-    "ar-tucuman": { }
-};
+     "ar-tucuman": {
+    "472": { name: "La Cocha", cap: "La Cocha" },
+    "473": { name: "Graneros", cap: "Graneros" },
+    "474": { name: "Juan Bautista Alberdi", cap: "Juan Bautista Alberdi" },
+    "475": { name: "Río Chico", cap: "Aguilares" },
+    "476": { name: "Chicligasta", cap: "Concepción" },
+    "477": { name: "Simoca", cap: "Simoca" },
+    "478": { name: "Lules", cap: "Lules" },
+    "479": { name: "Monteros", cap: "Monteros" },
+    "480": { name: "Leales", cap: "Bella Vista" },
+    "481": { name: "Famaillá", cap: "Famaillá" },
+    "482": { name: "Capital", cap: "San Miguel de Tucumán" },
+    "483": { name: "Cruz Alta", cap: "Banda del Río Salí" },
+    "484": { name: "Yerba Buena", cap: "Yerba Buena" },
+    "485": { name: "Burruyacú", cap: "Burruyacú" },
+    "486": { name: "Tafí Viejo", cap: "Tafí Viejo" },
+    "487": { name: "Tafí del Valle", cap: "Tafí del Valle" },
+    "490": { name: "Trancas", cap: "Trancas" }
+  },
 
 let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
 let photoData = JSON.parse(localStorage.getItem('photoData')) || {};
