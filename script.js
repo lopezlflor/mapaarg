@@ -27,7 +27,7 @@ const regionData = {
         "san luis": { name: "San Luis", cap: "San Luis" },
         "santa cruz": { name: "Santa Cruz", cap: "Río Gallegos" },
         "santa fe": { name: "Santa Fe", cap: "Santa Fe" },
-        "santiago del estero": { name: "Santiago del Estero", cap: "Santiago del Estero" },
+        "santiago del estero": { name: "Santiago del Estero", cap: "Sgo. del Estero" },
         "tierra del fuego": { name: "Tierra del Fuego", cap: "Ushuaia" },
         "tucuman": { name: "Tucumán", cap: "S. M. de Tucumán" }
     },
@@ -54,6 +54,7 @@ const regionData = {
 
 let savedStates = JSON.parse(localStorage.getItem('travelData')) || {};
 
+// Función crítica: Normaliza el texto para comparar (quita tildes y espacios)
 function normalizeText(text) {
     if (!text) return "";
     return text.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
@@ -67,7 +68,8 @@ function initMap(mode) {
     if (map) map.remove();
     map = L.map('map', { zoomControl: false, attributionControl: false });
 
-    setTimeout(() => { map.invalidateSize(); }, 500);
+    // Esperar a que el contenedor sea visible para calcular el tamaño
+    setTimeout(() => { map.invalidateSize(); }, 400);
 
     const fileName = mode === 'ar' ? 'ar.json' : 'departamentos-tucuman.json';
 
@@ -85,10 +87,10 @@ function initMap(mode) {
 function getFeatureId(feature) {
     if (!feature.properties) return "";
     if (currentMode === 'ar') {
-        // MUY IMPORTANTE: Tu ar.json usa NAME_1 para las provincias
-        return normalizeText(feature.properties.NAME_1 || "");
+        // Busca NAME_1 en tu archivo ar.json
+        return normalizeText(feature.properties.NAME_1);
     } else {
-        // Tu departamentos-tucuman.json usa departamen (código numérico)
+        // Busca departamen en tu archivo de tucuman
         return feature.properties.departamen ? feature.properties.departamen.toString() : "";
     }
 }
@@ -96,10 +98,9 @@ function getFeatureId(feature) {
 function styleFeature(feature) {
     const id = getFeatureId(feature);
     const status = savedStates[id] || 'neutral';
-    
-    let color = '#E0E0E0';
-    if (status === 'visited') color = '#A1887F';
-    if (status === 'passed') color = '#FFF176';
+    let color = '#E0E0E0'; // Gris
+    if (status === 'visited') color = '#A1887F'; // Marrón
+    if (status === 'passed') color = '#FFF176';  // Amarillo
 
     return {
         fillColor: color,
@@ -122,9 +123,9 @@ function onEachFeature(feature, layer) {
             document.getElementById("popupName").textContent = info.name;
             document.getElementById("popupCap").textContent = info.cap;
         } else {
-            // Si no encuentra la info, mostramos lo que viene en el JSON para depurar
+            // Depuración: Si no lo encuentra, muestra el nombre crudo del JSON
             document.getElementById("popupName").textContent = feature.properties.NAME_1 || selectedId;
-            document.getElementById("popupCap").textContent = "Sin datos";
+            document.getElementById("popupCap").textContent = "ID: " + selectedId;
         }
 
         document.getElementById("popup").classList.remove("hidden");
@@ -132,18 +133,16 @@ function onEachFeature(feature, layer) {
     });
 }
 
-// ESTA ES LA FUNCIÓN QUE CAMBIA EL COLOR
 function setStatus(status) {
     if (!selectedId || !selectedLayer) return;
 
-    // 1. Guardamos el estado
+    // 1. Guardar estado en LocalStorage
     savedStates[selectedId] = status;
     localStorage.setItem('travelData', JSON.stringify(savedStates));
 
-    // 2. FORZAMOS el cambio de estilo en la capa seleccionada
-    geoJsonLayer.resetStyle(selectedLayer); 
-    
-    // 3. Cerramos el popup
+    // 2. REPAINT: Obliga al mapa a redibujar la zona seleccionada
+    geoJsonLayer.resetStyle(selectedLayer);
+
     closePopup();
 }
 
@@ -160,6 +159,6 @@ function resetMap() {
     if(confirm("¿Borrar todo el progreso?")) {
         savedStates = {};
         localStorage.removeItem('travelData');
-        geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
+        if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
     }
 }
