@@ -2,62 +2,71 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Mapa Viajero</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Mapa Viajero 🍋</title>
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <!-- Tu CSS -->
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <section id="mainMenu" class="screen active">
-        <div class="menu-box">
-            <h1>Flor's checklist 🍋</h1>
-            <div class="menu-buttons">
-                <button onclick="initMap('ar')">🇦🇷 Argentina</button>
-                <button onclick="initMap('tucuman')">🍋 Tucumán</button>
-            </div>
-        </div>
-    </section>
+<!-- 🟢 MENÚ PRINCIPAL -->
+<div id="mainMenu" class="screen active">
+    <h1>Mapa Viajero</h1>
 
-    <section id="mapScreen" class="screen">
-        <header class="topbar">
-            <button onclick="goHome()">⬅ Menú</button>
-            <div class="legend">
-                <span><i class="visitado"></i> Visitado</span>
-                <span><i class="pasada"></i> De pasada</span>
-                <span><i class="sinvisitar"></i> Sin visitar</span>
-            </div>
-            <button onclick="resetMap()">♻ Reiniciar</button>
-        </header>
-        <div id="map"></div>
-    </section>
+    <button onclick="initMap('ar')">🇦🇷 Argentina</button>
+    <button onclick="initMap('ar-tucuman')">📍 Tucumán</button>
+</div>
 
-    <div id="popup" class="popup hidden">
-        <div class="popup-content">
-            <button class="close-btn" onclick="closePopup()">✖</button>
-            <img id="popupFlag" src="" alt="Bandera" class="flag-img">
-            <h2 id="popupName">Provincia</h2>
-            
-            <div class="upload-section">
-                <select id="citySelect" class="city-selector">
-                    </select>
-                <input type="file" id="photoInput" accept="image/*" multiple style="display: none;" onchange="handleFiles(this.files)">
-                <button onclick="document.getElementById('photoInput').click()" class="btn-upload">📸 Añadir Fotos</button>
-            </div>
+<!-- 🗺️ MAPA -->
+<div id="mapScreen" class="screen">
+    
+    <div id="topBar">
+        <button onclick="goHome()">← Volver</button>
+        <button onclick="resetMap()">Reset</button>
+    </div>
 
-            <div id="photoGallery" class="grouped-gallery">
-                </div>
+    <div id="map"></div>
 
-            <div class="status-buttons">
-                <button onclick="setStatus('visited')" class="btn-status visited-btn">Visitado</button>
-                <button onclick="setStatus('passed')" class="btn-status passed-btn">De pasada</button>
-                <button onclick="setStatus('neutral')" class="btn-status neutral-btn">Limpiar</button>
-            </div>
+</div>
+
+<!-- 🧾 POPUP -->
+<div id="popup" class="hidden">
+
+    <div class="popup-header">
+        <img id="popupFlag">
+        <div>
+            <h2 id="popupName"></h2>
+            <p id="popupCap"></p>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="script.js"></script>
+    <div class="popup-actions">
+        <button onclick="setStatus('visited')">✔ Visitado</button>
+        <button onclick="setStatus('passed')">➜ Pasé</button>
+        <button onclick="closePopup()">✖ Cerrar</button>
+    </div>
+
+    <hr>
+
+    <h3>Agregar recuerdo</h3>
+
+    <input type="file" id="photoInput">
+    <input type="text" id="photoCity" placeholder="Ciudad">
+    <input type="date" id="photoDate">
+
+    <button onclick="savePhoto()">Guardar</button>
+
+    <div id="photoGallery"></div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
