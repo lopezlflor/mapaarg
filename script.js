@@ -62,24 +62,18 @@ function normalizeText(text) {
         .trim();
 }
 
+// 🔥 FIX PRINCIPAL
 function getFeatureId(feature) {
     if (!feature.properties) return "";
 
     if (currentMode === 'ar') {
-        const possible =
-            feature.properties.NAME_1 ||
-            feature.properties.NAME ||
-            feature.properties.provincia ||
-            feature.properties.nam ||
-            "";
-
-        return normalizeText(possible);
+        let raw = feature.properties.name || "";
+        return normalizeText(raw);
     } else {
         return (
             feature.properties.departamen ||
             feature.properties.id ||
             feature.properties.ID ||
-            feature.properties.cod_dep ||
             ""
         ).toString();
     }
@@ -110,7 +104,7 @@ function initMap(mode) {
             map.fitBounds(geoJsonLayer.getBounds());
         })
         .catch(err => {
-            console.error("Error cargando JSON:", err);
+            console.error(err);
             alert("Error cargando el mapa");
         });
 }
@@ -137,9 +131,6 @@ function onEachFeature(feature, layer) {
         selectedLayer = layer;
         selectedId = getFeatureId(feature);
 
-        console.log("PROPERTIES:", feature.properties);
-        console.log("ID:", selectedId);
-
         const dataKey = currentMode === 'ar' ? 'ar' : 'ar-tucuman';
         const info = regionData[dataKey][selectedId];
 
@@ -147,12 +138,7 @@ function onEachFeature(feature, layer) {
             document.getElementById("popupName").textContent = info.name;
             document.getElementById("popupCap").textContent = info.cap;
         } else {
-            const fallback =
-                feature.properties.NAME_1 ||
-                feature.properties.NAME ||
-                selectedId;
-
-            document.getElementById("popupName").textContent = fallback;
+            document.getElementById("popupName").textContent = feature.properties.name || selectedId;
             document.getElementById("popupCap").textContent = "Sin datos";
         }
 
@@ -167,7 +153,6 @@ function setStatus(status) {
     savedStates[selectedId] = status;
     localStorage.setItem('travelData', JSON.stringify(savedStates));
 
-    // 🔥 repaint fuerte (esto soluciona muchos bugs)
     geoJsonLayer.setStyle(styleFeature);
 
     closePopup();
