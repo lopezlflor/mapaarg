@@ -51,17 +51,23 @@ function initMap(mode) {
     document.getElementById('mainMenu').classList.remove('active');
     document.getElementById('mapScreen').classList.add('active');
 
-    if (map) map.remove();
+    if (map) {
+        map.off();
+        map.remove();
+    }
 
     map = L.map('map', { zoomControl: false, attributionControl: false });
 
-    // Fix para que el mapa cargue bien el tamaño
-    setTimeout(() => { map.invalidateSize(); }, 300);
+    // Fix: Forzar recalcular tamaño después de que la pantalla se activa
+    setTimeout(() => { map.invalidateSize(); }, 400);
 
     const fileName = mode === 'ar' ? 'ar.json' : 'departamentos-tucuman.json';
 
     fetch(fileName)
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error("Archivo no encontrado");
+            return res.json();
+        })
         .then(data => {
             geoJsonLayer = L.geoJson(data, {
                 style: styleFeature,
@@ -69,14 +75,19 @@ function initMap(mode) {
             }).addTo(map);
             map.fitBounds(geoJsonLayer.getBounds());
         })
-        .catch(err => alert("Error al cargar " + fileName + ". Asegúrate que el archivo esté en la carpeta principal."));
+        .catch(err => {
+            console.error(err);
+            alert("Error: Asegúrate de que " + fileName + " esté en la carpeta raíz.");
+        });
 }
 
 function getFeatureId(feature) {
     if (currentMode === 'ar') {
-        return feature.properties.NAME_1 ? feature.properties.NAME_1.toLowerCase() : "";
+        // En tu ar.json el nombre está en NAME_1
+        return feature.properties && feature.properties.NAME_1 ? feature.properties.NAME_1.toLowerCase() : "";
     } else {
-        return feature.properties.departamen ? feature.properties.departamen.toString() : "";
+        // En tu JSON de Tucumán el ID está en departamen
+        return feature.properties && feature.properties.departamen ? feature.properties.departamen.toString() : "";
     }
 }
 
@@ -87,15 +98,21 @@ function styleFeature(feature) {
     if (status === 'visited') color = '#A1887F';
     if (status === 'passed') color = '#FFF176';
 
-    return { fillColor: color, weight: 1.5, opacity: 1, color: 'white', fillOpacity: 0.8 };
+    return {
+        fillColor: color,
+        weight: 1.5,
+        opacity: 1,
+        color: 'white',
+        fillOpacity: 0.8
+    };
 }
 
 function onEachFeature(feature, layer) {
-    layer.on('click', (e) => {
+    layer.on('click', () => {
         selectedLayer = layer;
         selectedId = getFeatureId(feature);
         const dataKey = currentMode === 'ar' ? 'ar' : 'ar-tucuman';
-        const info = regionData[dataKey][selectedId] || { name: selectedId, cap: "-" };
+        const info = regionData[dataKey][selectedId] || { name: "Desconocido", cap: "-" };
 
         document.getElementById("popupName").textContent = info.name;
         document.getElementById("popupCap").textContent = info.cap;
@@ -121,9 +138,11 @@ function goHome() {
 }
 
 function resetMap() {
-    if(confirm("¿Borrar todos los datos?")) {
+    if(confirm("¿Quieres borrar todos los colores marcados?")) {
         savedStates = {};
         localStorage.removeItem('travelData');
-        geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
+        if (geoJsonLayer) {
+            geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
+        }
     }
 }
