@@ -1,62 +1,51 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Travel Tracker Argentina & Tucumán</title>
+  <title>Travel Tracker</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/jsvectormap"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
-  <!-- MENÚ PRINCIPAL -->
   <section id="mainMenu" class="screen active">
     <div class="menu-box">
-      <h1>Mi mapa viajero</h1>
-      <p>Elegí qué mapa querés explorar</p>
-
+      <h1>Mi mapa viajero 🍋</h1>
       <div class="menu-buttons">
-        <button onclick="loadMap('ar')">🇦🇷 Argentina</button>
-        <button onclick="loadMap('ar-tucuman')">🍋 Tucumán</button>
+        <button onclick="initMap('ar')">🇦🇷 Argentina</button>
+        <button onclick="initMap('tucuman')">🍋 Tucumán</button>
       </div>
     </div>
   </section>
 
-  <!-- MAPA -->
   <section id="mapScreen" class="screen">
     <header class="topbar">
       <button onclick="goHome()">⬅ Menú</button>
-
       <div class="legend">
         <span><i class="visitado"></i> Visitado</span>
         <span><i class="pasada"></i> De pasada</span>
         <span><i class="sinvisitar"></i> Sin visitar</span>
       </div>
-
       <button onclick="resetMap()">♻ Reiniciar</button>
     </header>
-
     <div id="map"></div>
   </section>
 
-  <!-- POPUP -->
   <div id="popup" class="popup hidden">
     <div class="popup-content">
-      <button class="close-btn" onclick="closePopup()">✖</button>
-      <img id="popupFlag" src="" alt="Bandera" />
       <h2 id="popupName"></h2>
       <p><strong>Capital:</strong> <span id="popupCap"></span></p>
-
       <div class="status-buttons">
-        <button onclick="setStatus('visitado')">✔ Visitado</button>
-        <button onclick="setStatus('pasada')">🚗 De pasada</button>
-        <button onclick="setStatus('sinvisitar')">❌ Sin visitar</button>
+        <button onclick="setStatus('visited')" style="background:#A1887F; color:white;">Visitado</button>
+        <button onclick="setStatus('passed')" style="background:#FFF176;">De pasada</button>
+        <button onclick="setStatus('neutral')" style="background:#E0E0E0;">Limpiar</button>
       </div>
+      <button class="close-btn" onclick="closePopup()">Cerrar</button>
     </div>
   </div>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
