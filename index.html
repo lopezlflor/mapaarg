@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flor's checklist 🍋</title>
+  <title>Mi Mapa Viajero 🍋</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -34,21 +34,21 @@
 
   <div id="popup" class="popup hidden">
     <div class="popup-content">
+      <button class="close-btn" onclick="closePopup()">✖</button>
       <h2 id="popupName">Provincia</h2>
       <p><strong>Capital:</strong> <span id="popupCap">-</span></p>
       
-      <img id="popupFlag" src="" alt="" style="max-width: 100px; display: none; margin: 10px auto;">
-
       <div class="status-buttons">
         <button onclick="setStatus('visited')" style="background:#A1887F; color:white;">Visitado</button>
         <button onclick="setStatus('passed')" style="background:#FFF176;">De pasada</button>
         <button onclick="setStatus('neutral')" style="background:#E0E0E0;">Limpiar</button>
       </div>
-      <button class="close-btn" onclick="closePopup()">Cerrar</button>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
   <script src="script.js"></script>
+
 </body>
 </html>
