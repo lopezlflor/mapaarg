@@ -1,135 +1,26 @@
-/* style.css */
-body {
-  margin: 0;
-  font-family: 'Trebuchet MS', sans-serif;
-  background: #fff8dc;
-  color: #5c4b1f;
-}
-
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-.menu-box {
-  text-align: center;
-  margin-top: 15vh;
-}
-
-.menu-box h1 {
-  font-size: 3rem;
-  color: #c49b0b;
-}
-
-.menu-box p {
-  font-size: 1.2rem;
-}
-
-.menu-buttons {
-  margin-top: 2rem;
-}
-
-.menu-buttons button {
-  background: #ffe680;
-  border: none;
-  padding: 1rem 2rem;
-  margin: 1rem;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.menu-buttons button:hover {
-  background: #ffd84d;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #fff0a8;
-  padding: 1rem;
-  flex-wrap: wrap;
-}
-
-.topbar button {
-  background: #ffe680;
-  border: none;
-  border-radius: 15px;
-  padding: 0.7rem 1rem;
-  cursor: pointer;
-}
-
-.legend {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.9rem;
-}
-
-.legend i {
-  display: inline-block;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-}
-
-.visitado {
-  background: #b38b59;
-}
-
-.pasada {
-  background: #f4d03f;
-}
-
-.sinvisitar {
-  background: #bfc0c0;
-}
-
 #map {
+  height: calc(100vh - 70px);
   width: 100%;
-  height: 85vh;
+  background: #fff8dc;
 }
 
 .popup {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.5);
-  width: 100%;
-  height: 100%;
-}
-
-.popup.hidden {
-  display: none;
+  display: flex; justify-content: center; align-items: center;
+  z-index: 9999;
 }
 
 .popup-content {
-  background: #fff8dc;
-  padding: 2rem;
-  border-radius: 20px;
-  width: 320px;
-  margin: 10vh auto;
-  text-align: center;
-  position: relative;
+  background: white; padding: 2rem; border-radius: 20px; text-align: center;
 }
 
-.popup-content img {
-  width: 100px;
-  margin-bottom: 1rem;
-}
+.status-buttons { display: flex; gap: 10px; margin: 15px 0; }
+.status-buttons button { padding: 10px; border: none; border-radius: 10px; cursor: pointer; }
+.hidden { display: none !important; }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-}
-
-.status-buttons button {
-  display: block;
-  width: 100%;
-  margin: 0.5rem 0;
-}
+/* Colores leyenda */
+.visitado { background: #A1887F; }
+.pasada { background: #FFF176; }
+.sinvisitar { background: #E0E0E0; border: 1px solid #ccc; }
