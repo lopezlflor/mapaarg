@@ -49,7 +49,6 @@ body {
 
 #map { flex-grow: 1; background: var(--pastel-yellow); }
 
-/* Popup Estilizado */
 .popup {
   position: fixed;
   top: 0; left: 0;
@@ -75,20 +74,38 @@ body {
 .status-buttons { display: flex; gap: 10px; margin: 15px 0; justify-content: center; }
 .status-buttons button { padding: 10px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
 
-/* Galería */
+/* Galería Aesthetic */
 .gallery-section { margin-top: 20px; text-align: left; }
 .gallery-inputs input { width: 100%; margin-bottom: 8px; padding: 8px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 .btn-save { width: 100%; background: var(--dark-yellow); border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
   margin-top: 15px;
 }
 
-.gallery-item { position: relative; }
-.gallery-item img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.gallery-item {
+  position: relative;
+  background: #fff;
+  padding: 5px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.gallery-item img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 6px; }
+
+.gallery-info { display: flex; flex-direction: column; padding: 5px; }
+.gallery-info .city { font-size: 0.8rem; font-weight: bold; color: var(--text); }
+.gallery-info .date { font-size: 0.7rem; color: #888; }
+
+.delete-photo {
+  position: absolute; top: -5px; right: -5px;
+  background: #ff5252; color: white; border: none;
+  border-radius: 50%; width: 22px; height: 22px; cursor: pointer;
+}
 
 .legend i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 .visitado { background: var(--visited); }
