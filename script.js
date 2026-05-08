@@ -6,32 +6,32 @@ let selectedId = "";
 
 const regionData = {
     ar: {
-        "buenos aires": { name: "Buenos Aires", cap: "La Plata", flag: "ar-buenosaires.png" },
-        "caba": { name: "CABA", cap: "Capital Federal", flag: "ar-caba.png" },
-        "catamarca": { name: "Catamarca", cap: "San Fernando del Valle", flag: "ar-catamarca.png" },
-        "chaco": { name: "Chaco", cap: "Resistencia", flag: "ar-chaco.png" },
-        "chubut": { name: "Chubut", cap: "Rawson", flag: "ar-chubut.png" },
-        "cordoba": { name: "Córdoba", cap: "Córdoba", flag: "ar-cordoba.png" },
-        "corrientes": { name: "Corrientes", cap: "Corrientes", flag: "ar-corrientes.png" },
-        "entre rios": { name: "Entre Ríos", cap: "Paraná", flag: "ar-entrerios.png" },
-        "formosa": { name: "Formosa", cap: "Formosa", flag: "ar-formosa.png" },
-        "jujuy": { name: "Jujuy", cap: "S. S. de Jujuy", flag: "ar-jujuy.png" },
-        "la pampa": { name: "La Pampa", cap: "Santa Rosa", flag: "ar-lapampa.png" },
-        "la rioja": { name: "La Rioja", cap: "La Rioja", flag: "ar-larioja.png" },
-        "mendoza": { name: "Mendoza", cap: "Mendoza", flag: "ar-mendoza.png" },
-        "misiones": { name: "Misiones", cap: "Posadas", flag: "ar-misiones.png" },
-        "neuquen": { name: "Neuquén", cap: "Neuquén", flag: "ar-neuquen.png" },
-        "rio negro": { name: "Río Negro", cap: "Viedma", flag: "ar-rionegro.png" },
-        "salta": { name: "Salta", cap: "Salta", flag: "ar-salta.png" },
-        "san juan": { name: "San Juan", cap: "San Juan", flag: "ar-sanjuan.png" },
-        "san luis": { name: "San Luis", cap: "San Luis", flag: "ar-sanluis.png" },
-        "santa cruz": { name: "Santa Cruz", cap: "Río Gallegos", flag: "ar-santacruz.png" },
-        "santa fe": { name: "Santa Fe", cap: "Santa Fe", flag: "ar-santafe.png" },
-        "santiago del estero": { name: "Sgo. del Estero", cap: "Santiago del Estero", flag: "ar-santiago.png" },
-        "tierra del fuego": { name: "Tierra del Fuego", cap: "Ushuaia", flag: "ar-tierra.png" },
-        "tucuman": { name: "Tucumán", cap: "S. M. de Tucumán", flag: "ar-tucuman.png" }
+        "buenos aires": { name: "Buenos Aires", cap: "La Plata" },
+        "caba": { name: "CABA", cap: "Capital Federal" },
+        "catamarca": { name: "Catamarca", cap: "San Fernando del Valle" },
+        "chaco": { name: "Chaco", cap: "Resistencia" },
+        "chubut": { name: "Chubut", cap: "Rawson" },
+        "cordoba": { name: "Córdoba", cap: "Córdoba" },
+        "corrientes": { name: "Corrientes", cap: "Corrientes" },
+        "entre rios": { name: "Entre Ríos", cap: "Paraná" },
+        "formosa": { name: "Formosa", cap: "Formosa" },
+        "jujuy": { name: "Jujuy", cap: "S. S. de Jujuy" },
+        "la pampa": { name: "La Pampa", cap: "Santa Rosa" },
+        "la rioja": { name: "La Rioja", cap: "La Rioja" },
+        "mendoza": { name: "Mendoza", cap: "Mendoza" },
+        "misiones": { name: "Misiones", cap: "Posadas" },
+        "neuquen": { name: "Neuquén", cap: "Neuquén" },
+        "rio negro": { name: "Río Negro", cap: "Viedma" },
+        "salta": { name: "Salta", cap: "Salta" },
+        "san juan": { name: "San Juan", cap: "San Juan" },
+        "san luis": { name: "San Luis", cap: "San Luis" },
+        "santa cruz": { name: "Santa Cruz", cap: "Río Gallegos" },
+        "santa fe": { name: "Santa Fe", cap: "Santa Fe" },
+        "santiago del estero": { name: "Sgo. del Estero", cap: "Sgo. del Estero" },
+        "tierra del fuego": { name: "Tierra del Fuego", cap: "Ushuaia" },
+        "tucuman": { name: "Tucumán", cap: "S. M. de Tucumán" }
     },
-    "tucuman": { // Cambiado para coincidir con el botón
+    "tucuman": {
         "472": { name: "La Cocha", cap: "La Cocha" },
         "473": { name: "Graneros", cap: "Graneros" },
         "474": { name: "Juan Bautista Alberdi", cap: "Juan Bautista Alberdi" },
@@ -105,14 +105,6 @@ function onEachFeature(feature, layer) {
         document.getElementById("popupName").textContent = info ? info.name : (feature.properties.name || selectedId);
         document.getElementById("popupCap").textContent = info ? info.cap : "Sin datos";
         
-        const flagEl = document.getElementById("popupFlag");
-        if (info && info.flag) {
-            flagEl.src = "flags/" + info.flag;
-            flagEl.style.display = "inline-block";
-        } else {
-            flagEl.style.display = "none";
-        }
-
         renderGallery();
         document.getElementById("popup").classList.remove("hidden");
         L.DomEvent.stopPropagation(e);
@@ -136,10 +128,10 @@ function savePhoto() {
     const reader = new FileReader();
     reader.onload = function(e) {
         if (!photoData[selectedId]) photoData[selectedId] = [];
-        photoData[selectedId].push({ city, date, img: e.target.result });
+        photoData[selectedId].push({ city: city || "Ciudad", date: date || "S/F", img: e.target.result });
         localStorage.setItem("photoData", JSON.stringify(photoData));
         renderGallery();
-        // Limpiar inputs
+        
         document.getElementById("photoInput").value = "";
         document.getElementById("photoCity").value = "";
     };
@@ -150,12 +142,28 @@ function renderGallery() {
     const container = document.getElementById("photoGallery");
     container.innerHTML = "";
     const photos = photoData[selectedId] || [];
-    photos.forEach(p => {
-        const div = document.createElement("div");
-        div.className = "gallery-item";
-        div.innerHTML = `<img src="${p.img}" title="${p.city} - ${p.date}">`;
-        container.appendChild(div);
+    
+    photos.forEach((p, index) => {
+        const item = document.createElement("div");
+        item.className = "gallery-item";
+        item.innerHTML = `
+            <img src="${p.img}">
+            <div class="gallery-info">
+                <span class="city">${p.city}</span>
+                <span class="date">${p.date}</span>
+            </div>
+            <button class="delete-photo" onclick="deletePhoto(${index})">×</button>
+        `;
+        container.appendChild(item);
     });
+}
+
+function deletePhoto(index) {
+    if(confirm("¿Borrar foto?")) {
+        photoData[selectedId].splice(index, 1);
+        localStorage.setItem("photoData", JSON.stringify(photoData));
+        renderGallery();
+    }
 }
 
 function closePopup() { document.getElementById("popup").classList.add("hidden"); }
@@ -164,10 +172,8 @@ function goHome() {
     document.getElementById('mainMenu').classList.add('active');
 }
 function resetMap() {
-    if (confirm("¿Reiniciar todo?")) {
+    if (confirm("¿Reiniciar todo el progreso y fotos?")) {
         localStorage.clear();
-        savedStates = {};
-        photoData = {};
-        if (geoJsonLayer) geoJsonLayer.setStyle(styleFeature);
+        location.reload();
     }
 }
