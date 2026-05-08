@@ -1,72 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Mapa Viajero</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
-    <!-- Tu CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Mapa Viajero 🍋</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body>
 
-<!-- 🟢 MENÚ PRINCIPAL -->
-<div id="mainMenu" class="screen active">
-    <h1>Flor's checklist 🍋🇦🇷</h1>
-
-    <button onclick="initMap('ar')">🇦🇷 Argentina</button>
-    <button onclick="initMap('ar-tucuman')">🍋 Tucumán</button>
-</div>
-
-<!-- 🗺️ MAPA -->
-<div id="mapScreen" class="screen">
-    
-    <div id="topBar">
-        <button onclick="goHome()">← Volver</button>
-        <button onclick="resetMap()">Reset</button>
+  <section id="mainMenu" class="screen active">
+    <div class="menu-box">
+      <h1>Flor's checklist 🍋</h1>
+      <div class="menu-buttons">
+        <button onclick="initMap('ar')">🇦🇷 Argentina</button>
+        <button onclick="initMap('tucuman')">🍋 Tucumán</button>
+      </div>
     </div>
+  </section>
 
+  <section id="mapScreen" class="screen">
+    <header class="topbar">
+      <button onclick="goHome()">⬅ Menú</button>
+      <div class="legend">
+        <span><i class="visitado"></i> Visitado</span>
+        <span><i class="pasada"></i> Pasada</span>
+        <span><i class="sinvisitar"></i> Sin visitar</span>
+      </div>
+      <button onclick="resetMap()">♻ Reiniciar</button>
+    </header>
     <div id="map"></div>
+  </section>
 
-</div>
+  <div id="popup" class="popup hidden">
+    <div class="popup-content">
+      <button class="close-btn" onclick="closePopup()">✖</button>
+      
+      <div class="popup-header">
+          <img id="popupFlag" style="width: 50px; display:none; margin-bottom: 10px; border-radius: 5px;">
+          <h2 id="popupName">Provincia</h2>
+          <p><strong>Capital:</strong> <span id="popupCap">-</span></p>
+      </div>
+      
+      <div class="status-buttons">
+        <button onclick="setStatus('visited')" style="background:#A1887F; color:white;">Visitado</button>
+        <button onclick="setStatus('passed')" style="background:#FFF176;">De pasada</button>
+        <button onclick="setStatus('neutral')" style="background:#E0E0E0;">Limpiar</button>
+      </div>
 
-<!-- 🧾 POPUP -->
-<div id="popup" class="hidden">
+      <hr class="separator">
 
-    <div class="popup-header">
-        <img id="popupFlag">
-        <div>
-            <h2 id="popupName"></h2>
-            <p id="popupCap"></p>
-        </div>
+      <div class="gallery-section">
+          <h3>Mis Recuerdos 📸</h3>
+          <div class="gallery-inputs">
+              <input type="file" id="photoInput" accept="image/*">
+              <input type="text" id="photoCity" placeholder="¿Qué ciudad es?">
+              <input type="date" id="photoDate">
+              <button class="btn-save" onclick="savePhoto()">Guardar Foto</button>
+          </div>
+          <div id="photoGallery" class="gallery-grid"></div>
+      </div>
     </div>
+  </div>
 
-    <div class="popup-actions">
-        <button onclick="setStatus('visited')">✔ Visitado</button>
-        <button onclick="setStatus('passed')">➜ Pasé</button>
-        <button onclick="closePopup()">✖ Cerrar</button>
-    </div>
-
-    <hr>
-
-    <h3>Agregar recuerdo</h3>
-
-    <input type="file" id="photoInput">
-    <input type="text" id="photoCity" placeholder="Ciudad">
-    <input type="date" id="photoDate">
-
-    <button onclick="savePhoto()">Guardar</button>
-
-    <div id="photoGallery"></div>
-
-</div>
-
-<!-- Scripts -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="script.js"></script>
-
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
